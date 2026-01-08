@@ -1,0 +1,23 @@
+<div class="breed-selector">
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Selecciona una raza</mat-label>
+    <mat-select [(value)]="selectedBreedId" (selectionChange)="onBreedChange()" [disabled]="isLoading">
+      <mat-option *ngFor="let breed of breeds; trackBy: trackByBreedId" [value]="breed.id">
+        <div class="breed-option">
+          <img *ngIf="getBreedImage(breed)" 
+               [src]="getBreedImage(breed)" 
+               [alt]="breed.name" 
+               class="breed-thumb"
+               (error)="onImageError($event, breed)">
+          <mat-icon *ngIf="!getBreedImage(breed)" class="breed-icon">pets</mat-icon>
+          <div class="breed-info">
+            <div class="breed-name">{{breed.name}}</div>
+            <div class="breed-origin" *ngIf="breed.origin">{{breed.origin}}</div>
+          </div>
+        </div>
+      </mat-option>
+    </mat-select>
+    <mat-hint *ngIf="error" class="error-text">{{error}}</mat-hint>
+    <mat-spinner matSuffix *ngIf="isLoading" diameter="24"></mat-spinner>
+  </mat-form-field>
+</div>

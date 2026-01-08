@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+  <button mat-button (click)="navigateToHome()" class="home-button">
+    <mat-icon>pets</mat-icon>
+    <span>Cat Breed Explorer</span>
+  </button>
+  <span class="spacer"></span>
+  <div *ngIf="!isAuthenticated">
+    <a mat-button routerLink="/login">Iniciar Sesión</a>
+    <a mat-button routerLink="/register">Registrarse</a>
+  </div>
+  <div *ngIf="isAuthenticated">
+    <button mat-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+      <span>Mi Cuenta</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Perfil</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

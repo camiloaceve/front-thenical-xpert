@@ -1,0 +1,267 @@
+<div class="breeds-container">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <ol>
+      <li><a routerLink="/">Inicio</a></li>
+      <li aria-current="page">Razas</li>
+    </ol>
+  </nav>
+  
+  <div class="header-container">
+    <h1>Razas de Gatos</h1>
+    <div class="view-toggle">
+      <button mat-icon-button [class.active]="!isGridView" (click)="toggleView()" matTooltip="Vista de tabla">
+        <mat-icon>view_list</mat-icon>
+      </button>
+      <button mat-icon-button [class.active]="isGridView" (click)="toggleView()" matTooltip="Vista de cuadrícula">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-spinner [diameter]="60"></mat-spinner>
+    <p>Cargando razas de gatos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadBreeds()" class="retry-button">
+      <mat-icon>refresh</mat-icon> Reintentar
+    </button>
+  </div>
+
+  <!-- Search and Controls -->
+  <div *ngIf="!isLoading && !error" class="controls-container">
+    <div class="search-and-filters">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar razas</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput 
+                 [(ngModel)]="searchTerm" 
+                 (input)="applyFilter()" 
+                 placeholder="Escribe para buscar..."
+                 #searchInput>
+          <button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="searchTerm">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint>Busca por nombre, origen, temperamento o descripción</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Filtros avanzados -->
+      <button mat-stroked-button (click)="toggleAdvancedFilters()" class="filters-toggle">
+        <mat-icon>filter_alt</mat-icon>
+        Filtros
+      </button>
+    </div>
+
+    <!-- Filtros desplegables -->
+    <div class="advanced-filters" *ngIf="showAdvancedFilters" @fadeInOut>
+      <mat-form-field appearance="outline">
+        <mat-label>Origen</mat-label>
+        <mat-select [(ngModel)]="selectedOrigin" (selectionChange)="applyFilters()" multiple>
+          <mat-option *ngFor="let origin of availableOrigins" [value]="origin">{{origin}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Temperamento</mat-label>
+        <mat-select [(ngModel)]="selectedTemperaments" (selectionChange)="applyFilters()" multiple>
+          <mat-option *ngFor="let temp of availableTemperaments" [value]="temp">{{temp}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Chips de filtros activos -->
+    <div class="active-filters" *ngIf="hasActiveFilters()">
+      <mat-chip-grid #chipGrid>
+        <mat-chip-row *ngFor="let origin of selectedOrigin" (removed)="removeFilter('origin', origin)">
+          Origen: {{origin}}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <mat-chip-row *ngFor="let temp of selectedTemperaments" (removed)="removeFilter('temperament', temp)">
+          Temperamento: {{temp}}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <button mat-button color="primary" (click)="clearAllFilters()" class="clear-all">
+          Limpiar filtros
+        </button>
+      </mat-chip-grid>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-count" *ngIf="filteredBreeds.length > 0">
+      Mostrando {{ filteredBreeds.length }} de {{ breeds.length }} razas
+      <span *ngIf="currentPage > 1">- Página {{currentPage}} de {{totalPages}}</span>
+    </div>
+  </div>
+
+  <!-- No Results Message -->
+  <div *ngIf="!isLoading && !error && filteredBreeds.length === 0" class="no-results">
+    <mat-icon class="no-results-icon">search_off</mat-icon>
+    <h3>No se encontraron resultados</h3>
+    <p *ngIf="searchTerm">No hay razas que coincidan con "{{ searchTerm }}"</p>
+    <p *ngIf="!searchTerm">No se encontraron razas de gatos.</p>
+    <button mat-button color="primary" (click)="clearSearch()" *ngIf="searchTerm">
+      <mat-icon>refresh</mat-icon> Limpiar búsqueda
+    </button>
+  </div>
+
+  <!-- Breeds Table -->
+  <div *ngIf="!isLoading && !error && filteredBreeds.length > 0" class="table-container" [ngClass]="{'grid-view': isGridView}">
+    <!-- Vista de cuadrícula -->
+    <div *ngIf="isGridView" class="breeds-grid">
+      <mat-card *ngFor="let breed of pagedBreeds" class="breed-card" 
+                [class.selected]="selectedBreedId === breed.id"
+                (click)="viewDetails(breed)">
+        <div class="card-image">
+          <img [src]="getBreedImage(breed)" 
+               [alt]="breed.name" 
+               (error)="onImageError($event, breed)"
+               *ngIf="getBreedImage(breed)">
+          <div class="no-image" *ngIf="!getBreedImage(breed)">
+            <mat-icon>pets</mat-icon>
+          </div>
+        </div>
+        <mat-card-content>
+          <h3>{{ breed.name || 'Sin nombre' }}</h3>
+          <div class="breed-origin" *ngIf="breed.origin">
+            <mat-icon>location_on</mat-icon> {{ breed.origin }}
+          </div>
+          <div class="breed-temperament" *ngIf="breed.temperament">
+            {{ getShortTemperament(breed.temperament) }}
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-icon-button (click)="viewDetails(breed); $event.stopPropagation()" matTooltip="Ver detalles">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <a *ngIf="breed.wikipedia_url" 
+             mat-icon-button 
+             [href]="breed.wikipedia_url" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             matTooltip="Ver en Wikipedia"
+             (click)="$event.stopPropagation()">
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Vista de tabla -->
+    <div *ngIf="!isGridView">
+      <table mat-table [dataSource]="filteredBreeds" matSort (matSortChange)="onSortChange($event)" class="mat-elevation-z1">
+        <!-- Image Column -->
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef>Imagen</th>
+          <td mat-cell *matCellDef="let breed">
+            <div class="image-container">
+              <img [src]="getBreedImage(breed)" 
+                   [alt]="breed.name" 
+                   class="breed-image"
+                   (error)="onImageError($event, breed)"
+                   *ngIf="getBreedImage(breed)">
+              <div class="no-image" *ngIf="!getBreedImage(breed)">
+                <mat-icon>pets</mat-icon>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name" mat-sort-header>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Nombre</th>
+          <td mat-cell *matCellDef="let breed">
+            <div class="breed-name">{{ breed.name || 'Sin nombre' }}</div>
+            <div class="breed-origin" *ngIf="breed.origin">
+              <mat-icon class="location-icon">location_on</mat-icon>
+              {{ breed.origin }}
+            </div>
+            <div class="breed-life" *ngIf="breed.life_span">
+              <mat-icon class="lifespan-icon">schedule</mat-icon>
+              {{ breed.life_span }} años
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Temperament Column -->
+        <ng-container matColumnDef="temperament">
+          <th mat-header-cell *matHeaderCellDef>Temperamento</th>
+          <td mat-cell *matCellDef="let breed">
+            <div class="temperament" [matTooltip]="breed.temperament || 'Sin información'" matTooltipPosition="above">
+              {{ getShortTemperament(breed.temperament) }}
+            </div>
+            <div class="temperament-chips" *ngIf="getTemperamentTraits(breed.temperament).length > 0">
+              <mat-chip-set>
+                <mat-chip *ngFor="let trait of getTemperamentTraits(breed.temperament).slice(0, 3)" 
+                         [matTooltip]="trait"
+                         class="temperament-chip">
+                  {{ trait.length > 15 ? (trait | slice:0:12) + '...' : trait }}
+                </mat-chip>
+                <mat-chip *ngIf="getTemperamentTraits(breed.temperament).length > 3" class="more-chip">
+                  +{{ getTemperamentTraits(breed.temperament).length - 3 }} más
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-header">Acciones</th>
+          <td mat-cell *matCellDef="let breed" class="actions-cell">
+            <div class="action-buttons">
+              <button mat-icon-button color="primary" 
+                      (click)="viewDetails(breed)" 
+                      matTooltip="Ver detalles" 
+                      class="action-button"
+                      aria-label="Ver detalles">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <a *ngIf="breed.wikipedia_url" 
+                 mat-icon-button 
+                 [href]="breed.wikipedia_url" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 matTooltip="Ver en Wikipedia" 
+                 class="action-button"
+                 aria-label="Abrir en Wikipedia">
+                <mat-icon>open_in_new</mat-icon>
+              </a>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <mat-paginator [length]="getTotalCount()"
+                    [pageSize]="pageSize"
+                    [pageIndex]="pageIndex"
+                    [pageSizeOptions]="pageSizeOptions"
+                    (page)="onPageChange($event)"
+                    showFirstLastButtons
+                    aria-label="Seleccionar página"
+                    class="mat-elevation-z2">
+      </mat-paginator>
+      <div class="page-info" *ngIf="totalPages > 1">
+        Página {{currentPage}} de {{totalPages}} - Total: {{getTotalCount()}} razas
+      </div>
+    </div>
+  </div>
+</div>

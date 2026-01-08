@@ -1,0 +1,39 @@
+<div class="register-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Crear Cuenta</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="username" placeholder="Ingresa tu nombre">
+          <mat-error *ngIf="f['username'].errors?.['required']">Nombre es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="Ingresa tu email">
+          <mat-error *ngIf="f['email'].errors?.['required']">Email es requerido</mat-error>
+          <mat-error *ngIf="f['email'].errors?.['email']">Ingresa un email válido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password" placeholder="Ingresa tu contraseña">
+          <mat-error *ngIf="f['password'].errors?.['required']">Contraseña es requerida</mat-error>
+          <mat-error *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading" class="full-width">
+          <span *ngIf="!loading">Registrarse</span>
+          <mat-spinner *ngIf="loading" diameter="24"></mat-spinner>
+        </button>
+
+        <div class="login-link">
+          ¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

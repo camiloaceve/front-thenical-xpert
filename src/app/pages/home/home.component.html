@@ -1,0 +1,87 @@
+<div class="home-container">
+    <h1>Prueba de renderizado</h1>
+  <p *ngIf="true">Este texto debería verse</p>
+  
+  <header class="hero-section text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">🐱 Cat Breed Explorer</h1>
+    <p class="lead">Explora y descubre información sobre diferentes razas de gatos</p>
+    <div class="search-section mt-4">
+      <app-breed-selector (breedSelected)="onBreedSelected($event)"></app-breed-selector>
+    </div>
+  </header>
+
+  <main>
+    <mat-tab-group [(selectedIndex)]="activeTabIndex" animationDuration="500ms">
+      <!-- Pestaña de Bienvenida -->
+      <mat-tab label="Inicio">
+        <div class="welcome-tab mt-4">
+          <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+              <div class="card custom-card p-5">
+                <i class="fa fa-paw fa-4x text-primary mb-4"></i>
+                <h3>¡Bienvenido al Explorador de Razas de Gatos!</h3>
+                <p class="mt-3">
+                  Esta aplicación te permite explorar información detallada sobre diferentes razas de gatos. 
+                  Usa el selector superior para elegir una raza y ver sus características, imágenes y más.
+                </p>
+                <div class="features mt-4">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="feature-item p-3">
+                        <i class="fa fa-search fa-2x text-primary"></i>
+                        <h5 class="mt-2">Buscar Razas</h5>
+                        <p class="small">Encuentra tu raza favorita</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="feature-item p-3">
+                        <i class="fa fa-image fa-2x text-success"></i>
+                        <h5 class="mt-2">Ver Imágenes</h5>
+                        <p class="small">Galería de fotos por raza</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="feature-item p-3">
+                        <i class="fa fa-table fa-2x text-warning"></i>
+                        <h5 class="mt-2">Comparar</h5>
+                        <p class="small">Tabla comparativa completa</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <button mat-raised-button color="primary" (click)="setActiveTab(2)">
+                    <mat-icon>table_chart</mat-icon> Ver todas las razas
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Pestaña de Detalles -->
+      <mat-tab label="Detalles">
+        <div class="detail-tab mt-4">
+          <div *ngIf="selectedBreedId; else noBreedSelected">
+            <app-breed-detail [breedId]="selectedBreedId"></app-breed-detail>
+          </div>
+          <ng-template #noBreedSelected>
+            <div class="text-center py-5">
+              <i class="fa fa-cat fa-4x text-muted mb-3"></i>
+              <h4>Selecciona una raza de gato</h4>
+              <p>Usa el selector en la parte superior para elegir una raza y ver sus detalles</p>
+            </div>
+          </ng-template>
+        </div>
+      </mat-tab>
+
+      <!-- Pestaña de Tabla -->
+      <mat-tab label="Tabla Completa">
+        <div class="table-tab mt-4">
+          <app-breeds-table></app-breeds-table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </main>
+</div>

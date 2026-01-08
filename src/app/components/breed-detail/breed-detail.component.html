@@ -1,0 +1,108 @@
+<div class="breed-detail-container">
+  <div *ngIf="isLoading" class="text-center py-5">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-3">Cargando información del gato...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="breed && !isLoading" class="breed-card">
+    <mat-card class="custom-card">
+      <mat-card-header>
+        <mat-card-title>{{ breed.name }}</mat-card-title>
+        <mat-card-subtitle>{{ breed.origin }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-tab-group [(selectedIndex)]="activeTabIndex" animationDuration="500ms">
+          <!-- Pestaña de Imágenes -->
+          <mat-tab label="Imágenes">
+            <div class="carousel-container mt-3">
+              <carousel *ngIf="images.length > 0">
+                <slide *ngFor="let image of images; let i = index" [class.active]="i === 0">
+                  <img [src]="image.url" 
+                       [alt]="breed.name + ' ' + (i + 1)" 
+                       class="d-block w-100 carousel-image">
+                </slide>
+              </carousel>
+              
+              <div *ngIf="images.length === 0" class="no-images text-center py-5">
+                <i class="fa fa-image fa-3x text-muted"></i>
+                <p class="mt-2">No hay imágenes disponibles</p>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Pestaña de Información -->
+          <mat-tab label="Información">
+            <div class="info-container mt-3">
+              <div class="row">
+                <div class="col-md-6">
+                  <h5>Descripción</h5>
+                  <p>{{ breed.description }}</p>
+                  
+                  <h5 class="mt-4">Temperamento</h5>
+                  <div class="temperament-chips">
+                    <mat-chip *ngFor="let trait of getTemperamentArray()" color="primary" selected>
+                      {{ trait }}
+                    </mat-chip>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <h5>Características</h5>
+                  <ul class="characteristics-list">
+                    <li>
+                      <span>Esperanza de vida:</span>
+                      <span class="value">{{ breed.life_span }} años</span>
+                    </li>
+                    <li *ngIf="breed?.weight?.metric !== undefined">
+                      <span>Peso:</span>
+                      <span class="value">{{ breed.weight.metric }} kg</span>
+                    </li>
+                    <li *ngIf="breed?.weight?.metric === undefined">
+                      <span>Peso:</span>
+                      <span class="value">No especificado</span>
+                    </li>
+                    <li>
+                      <span>Adaptabilidad:</span>
+                      <span class="value" [ngClass]="getCharacteristicClass(breed.adaptability)">
+                        {{ getCharacteristicLevel(breed.adaptability) }}
+                      </span>
+                    </li>
+                    <li>
+                      <span>Nivel de afecto:</span>
+                      <span class="value" [ngClass]="getCharacteristicClass(breed.affection_level)">
+                        {{ getCharacteristicLevel(breed.affection_level) }}
+                      </span>
+                    </li>
+                    <li>
+                      <span>Amigable con niños:</span>
+                      <span class="value" [ngClass]="getCharacteristicClass(breed.child_friendly)">
+                        {{ getCharacteristicLevel(breed.child_friendly) }}
+                      </span>
+                    </li>
+                    <li>
+                      <span>Energía:</span>
+                      <span class="value" [ngClass]="getCharacteristicClass(breed.energy_level)">
+                        {{ getCharacteristicLevel(breed.energy_level) }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <a [href]="breed.wikipedia_url" target="_blank" class="btn btn-outline-primary">
+                  <i class="fa fa-wikipedia-w"></i> Más información en Wikipedia
+                </a>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
