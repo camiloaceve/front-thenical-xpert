@@ -3,9 +3,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
 // Angular Material
 import { MatTabsModule } from '@angular/material/tabs';
@@ -35,26 +33,21 @@ import { AuthGuard } from './guards/auth.guard';
 
 // Interceptors
 import { HTTP_INTERCEPTOR_PROVIDERS } from './interceptors';
+import { BreedsModule } from './features/breeds/breeds.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    // LoginComponent,
-    // RegisterComponent,
-    // ProfileComponent,
-    // NavbarComponent,
-    // HomeComponent
+    AppComponent
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
+    // Módulos principales
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    // CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule,
-    RouterModule,
+    AppRoutingModule,  // Este ya incluye RouterModule.forRoot()
+    
     // Angular Material
     MatTabsModule,
     MatIconModule,
@@ -65,9 +58,15 @@ import { HTTP_INTERCEPTOR_PROVIDERS } from './interceptors';
     MatProgressSpinnerModule,
     MatToolbarModule,
 
-    // Standalone components - moved here from declarations
+    // Módulos de la aplicación
+    BreedsModule,
+
+    // Componentes standalone
     NavbarComponent,
-    HomeComponent
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent,
+    ProfileComponent
   ],
   providers: [
     AuthService,
@@ -75,6 +74,7 @@ import { HTTP_INTERCEPTOR_PROVIDERS } from './interceptors';
     AuthGuard,
     HTTP_INTERCEPTOR_PROVIDERS
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

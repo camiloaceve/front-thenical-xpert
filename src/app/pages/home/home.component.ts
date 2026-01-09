@@ -4,19 +4,29 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { BreedSelectorComponent } from '../../components/breed-selector/breed-selector.component';
 import { BreedDetailComponent } from '../../components/breed-detail/breed-detail.component';
 import { BreedsTableComponent } from '../../components/breeds-table/breeds-table.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    // Angular Material
     MatTabsModule,
     MatIconModule,
     MatButtonModule,
     MatCardModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    // Componentes
     BreedSelectorComponent,
     BreedDetailComponent,
     BreedsTableComponent

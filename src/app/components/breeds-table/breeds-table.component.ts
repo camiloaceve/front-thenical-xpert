@@ -48,8 +48,7 @@ import { CatBreed } from '../../models/cat.model';
     MatChipsModule,
     MatTooltipModule,
     MatSelectModule,
-    MatDividerModule,
-    BrowserAnimationsModule
+    MatDividerModule
   ],
   animations: [
     trigger('fadeInOut', [
