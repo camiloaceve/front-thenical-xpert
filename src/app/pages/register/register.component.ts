@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,7 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
   imports: [ReactiveFormsModule, CommonModule, 
     MatFormFieldModule, MatInputModule, MatButtonModule, 
     MatCardModule, MatToolbarModule, MatIconModule, MatProgressSpinnerModule,
-    MatSelectModule, MatTabsModule
+    MatSelectModule, MatTabsModule, RouterLink
   ],
   styleUrls: ['./register.component.css']
 })

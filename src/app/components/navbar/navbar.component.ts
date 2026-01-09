@@ -13,7 +13,8 @@ import { MatDividerModule } from '@angular/material/divider';
   standalone: true,
   imports: [
     CommonModule,
-    MatMenuModule,  // Add this
+    RouterModule,  // Add RouterModule for routerLink
+    MatMenuModule,
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
@@ -42,6 +43,8 @@ export class NavbarComponent {
   }
 
   navigateToHome(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home']).then(() => {
+      window.scrollTo(0, 0);
+    });
   }
 }

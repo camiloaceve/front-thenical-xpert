@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -10,14 +10,27 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   standalone: true,
   imports: [
-    ReactiveFormsModule, CommonModule, MatCardModule, MatToolbarModule, MatIconModule,
-    MatProgressSpinnerModule, MatSelectModule, MatTabsModule, MatTooltipModule
+    ReactiveFormsModule, 
+    CommonModule, 
+    MatCardModule, 
+    MatToolbarModule, 
+    MatIconModule,
+    MatProgressSpinnerModule, 
+    MatSelectModule, 
+    MatTabsModule, 
+    MatTooltipModule,
+    MatFormFieldModule, 
+    MatInputModule, 
+    RouterLink,
+    RouterLinkActive
   ],
   styleUrls: ['./login.component.css']
 })
